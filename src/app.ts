@@ -17,7 +17,7 @@ app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
 
-/* from here we, create set up endpoints for our application
+/* from here we, set up endpoints for our application
     - an endpoint looks like this: http://localhost:3000/api/endpoint
     - we respond to specific HTTP requests (GET, POST, PUT, DELETE) like this:
         app.get('/api/endpoint', (req, res) => {    
