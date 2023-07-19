@@ -16,3 +16,11 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
+
+/* from here we, create set up endpoints for our application
+    - an endpoint looks like this: http://localhost:3000/api/endpoint
+    - we respond to specific HTTP requests (GET, POST, PUT, DELETE) like this:
+        app.get('/api/endpoint', (req, res) => {    
+            res.send('Hello World');
+        }
+*/
