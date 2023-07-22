@@ -1,0 +1,274 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Volunteer Management System API",
+        "descrip[tion": "This is a basic API that allows an administor to manage volunteers and their assignments."
+    },
+    "servers": [
+        {
+            "url": "http://localhost:3000",
+            "description": "Local server"
+        }
+    ],
+    "paths": {
+        "/users": {
+            "get": {
+                "description": "Get all users",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Volunteer"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a new user",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Volunteer"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Volunteer"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                }
+            }
+        },
+        "/users/{userName}": {
+            "get": {
+                "summary": "Get a user by userName",
+                "description": "Get a user by userName",
+                "parameters": [
+                    {
+                        "name": "username",
+                        "in": "path",
+                        "description": "unique username",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Volunteer"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                }
+            },
+            "put": {
+                "description": "Update a volunteer by userName",
+                "parameters": [
+                    {
+                        "name": "userName",
+                        "in": "path",
+                        "description": "unique userName",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Volunteer"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "User updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Volunteer"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Volunteer not found"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete a user by userName",
+                "description": "Delete a user by userName",
+                "parameters": [
+                    {
+                        "name": "username",
+                        "in": "path",
+                        "description": "unique username",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "User deleted successfully"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                }
+            }
+        },
+        "/users/login": {
+            "get": {
+                "description": "Login a user",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/loginUser"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/loginUser"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Volunteer": {
+                "type": "object",
+                "properties": {
+                    "first": {
+                        "type": "string"
+                    },
+                    "last": {
+                        "type": "string"
+                    },
+                    "userName": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    },
+                    "preferredLocations": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "skills_Interests": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "availability": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "address": {
+                        "type": "string"
+                    },
+                    "phone": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "education": {
+                        "type": "string"
+                    },
+                    "currentLicenses": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "emergencyContact": {
+                        "type": "string"
+                    },
+                    "emergencyPhone": {
+                        "type": "string"
+                    },
+                    "emergencyEmail": {
+                        "type": "string"
+                    },
+                    "emergencyAddress": {
+                        "type": "string"
+                    },
+                    "driversLicense": {
+                        "type": "boolean"
+                    },
+                    "SSCard": {
+                        "type": "boolean"
+                    },
+                    "approved": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "loginUser": {
+                "type": "object",
+                "properties": {
+                    "userName": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}
