@@ -1,5 +1,7 @@
 import express from 'express';
 import cors from 'cors';
+import { userRouter } from './routers/userRouter';
+
 let port = 3000;
 
 let app = express();
@@ -8,6 +10,8 @@ app.use(cors({
     credentials: true
 }));
 app.use(express.json());
+
+app.use('/users', userRouter);
 
 app.get('/', (req, res) => {
     res.send('Hello World');
