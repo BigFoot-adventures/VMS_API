@@ -1,10 +1,11 @@
 import express from "express";
-import { volunteer } from "../models/volunteer";
+import { user } from "../models/user";
 
 let userRouter = express.Router();
 
-let users: volunteer[] = [
+let users: user[] = [
     {
+        role: 'admin',
         first: 'John',
         last: 'Doe',
         userName: 'jdoe',
@@ -26,6 +27,7 @@ let users: volunteer[] = [
         approved: true
     },
     {
+        role: 'volunteer',
         first: 'Jane',
         last: 'Doe',
         userName: 'jdoe2',
@@ -72,7 +74,7 @@ userRouter.get('/:userName', (req, res) => {
 
 // This route will be used to login a user
 // add authentication
-userRouter.get('/login', (req, res) => {
+userRouter.post('/login', (req, res) => {
     let user = req.body;
     let index = users.findIndex(user => user.userName == user.userName && user.password == user.password);
     if(index){

@@ -1,5 +1,6 @@
-export class volunteer {
+export class user {
 
+    role: 'volunteer' | 'admin';
     first: string;
     last: string;
     userName: string;
@@ -20,7 +21,8 @@ export class volunteer {
     SSCard: boolean;
     approved: boolean;
 
-    constructor(first: string, last: string, userName: string, password: string, preferedLocations: string[], skills_Interests: string[], availability: string[], address: string, phone: string, email: string, education: string, currentLicenses: string[], emergencyContact: string, emergencyPhone: string, emergencyEmail: string, emergencyAddress: string, driversLicense: boolean, SSCard: boolean, approved: boolean) {
+    constructor(role: 'volunteer' | 'admin', first: string, last: string, userName: string, password: string, preferedLocations: string[], skills_Interests: string[], availability: string[], address: string, phone: string, email: string, education: string, currentLicenses: string[], emergencyContact: string, emergencyPhone: string, emergencyEmail: string, emergencyAddress: string, driversLicense: boolean, SSCard: boolean, approved: boolean) {
+        this. role = role;
         this.first = first;
         this.last = last;
         this.userName = userName;
