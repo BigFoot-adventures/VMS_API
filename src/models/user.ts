@@ -44,4 +44,29 @@ export class user {
         this.SSCard = SSCard;
         this.approved = approved;
     }
+
+    passwordlessUser() {
+        let result = {
+            role: this.role,
+            first: this.first,
+            last: this.last,
+            userName: this.userName,
+            preferedLocations: this.preferedLocations,
+            skills_Interests: this.skills_Interests,
+            availability: this.availability,
+            address: this.address,
+            phone: this.phone,
+            email: this.email,
+            education: this.education,
+            currentLicenses: this.currentLicenses,
+            emergencyContact: this.emergencyContact,
+            emergencyPhone: this.emergencyPhone,
+            emergencyEmail: this.emergencyEmail,
+            emergencyAddress: this.emergencyAddress,
+            driversLicense: this.driversLicense,
+            SSCard: this.SSCard,
+            approved: this.approved
+        }
+        return result;
+    }
 }
