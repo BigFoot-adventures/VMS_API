@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import { userRouter } from './routers/userRouter';
+import { authRouter } from './middleware/auth';
 import swaggerUI from 'swagger-ui-express';
 import { readFileSync } from 'fs';
 import path from 'path';
@@ -17,6 +18,7 @@ app.use(cors({
 
 app.use(express.json());
 
+app.use('/', authRouter);
 app.use('/users', userRouter);
 
 app.use('/', swaggerUI.serve, swaggerUI.setup(swagger_obj));

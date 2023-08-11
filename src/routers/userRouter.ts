@@ -1,91 +1,69 @@
 import express from "express";
+import jwt from "jsonwebtoken";
 import { user } from "../models/user";
+import { admin } from '../middleware/auth';
 
 let userRouter = express.Router();
 
-let users: user[] = [
-    {
-        role: 'admin',
-        first: 'John',
-        last: 'Doe',
-        userName: 'jdoe',
-        password: 'password',
-        preferedLocations: ['location1', 'location2'],
-        skills_Interests: ['skill1', 'skill2'],
-        availability: ['Monday', 'Tuesday'],
-        address: '1234 Main St',
-        phone: '123-456-7890',
-        email: 'test@test.com',
-        education: 'High School',
-        currentLicenses: ['license1', 'license2'],
-        emergencyContact: 'Jane Doe',
-        emergencyPhone: '123-456-7890',
-        emergencyEmail: 'test@test.com',
-        emergencyAddress: '1234 Main St',
-        driversLicense: true,
-        SSCard: true,
-        approved: true
-    },
-    {
-        role: 'volunteer',
-        first: 'Jane',
-        last: 'Doe',
-        userName: 'jdoe2',
-        password: 'password',
-        preferedLocations: ['location1', 'location2'],
-        skills_Interests: ['skill1', 'skill2'],
-        availability: ['Monday', 'Tuesday'],
-        address: '1234 Main St',
-        phone: '123-456-7890',
-        email: 'jane@mail.com',
-        education: 'High School',
-        currentLicenses: ['license1', 'license2'],
-        emergencyContact: 'John Doe',
-        emergencyPhone: '123-456-7890',
-        emergencyEmail: 'john@mail.com',
-        emergencyAddress: '1234 Main St',
-        driversLicense: true,
-        SSCard: true,
-        approved: true
-    }
-];
+let users: user[] = [];
+users.push(new user('admin', 'John', 'Doe', 'jdoe', 'password',['location1', 'location2'], ['skill1', 'skill2'], ['Monday', 'Tuesday'], '1234 Main St', '123-456-7890', 'test@test.com', 'High School', ['license1', 'license2'], 'Jane Doe', '123-456-7890', 'jane@doe', '1234 Main St', true, true, true));
+users.push(new user('volunteer', 'Jane', 'Doe', 'jdoe2', 'password',['location1', 'location2'], ['skill1', 'skill2'], ['Monday', 'Tuesday'], '1234 Main St', '123-456-7890', 'jane@doe.com', 'College', ['license1', 'license2'], 'John Doe', '123-456-7890', 'test@test.com', '1234 Main St', true, true, true));
 
 // This route will be used to get all users
-// add authentication
-userRouter.get('/', (req, res) => {
-    res.json(users);
+// must be an admin
+userRouter.get('/search', (req, res) => {
+    let pwdless = users.map(user => user.passwordlessUser());
+    if(admin){
+        res.json(pwdless);
+    } else {
+        res.status(401).send({message: 'Unauthorized'});
+    }
 });
 
 // This route will be used to create a new user
 // add unique userName validation
 userRouter.post('/', (req, res) => {
-    let user = req.body;
-    users.push(user);
-    res.json(user);
+    let u = req.body;
+    // validate user
+    let newUser;
+    if(u.role && u.first && u.last && u.userName && u.password && u.preferedLocations && u.skills_Interests && u.availability && u.address && u.phone && u.email && u.education && u.currentLicenses && u.emergencyContact && u.emergencyPhone && u.emergencyEmail && u.emergencyAddress && u.driversLicense && u.SSCard && u.approved) {
+        newUser = new user(u.role, u.first, u.last, u.userName, u.password, u.preferedLocations, u.skills_Interests, u.availability, u.address, u.phone, u.email, u.education, u.currentLicenses, u.emergencyContact, u.emergencyPhone, u.emergencyEmail, u.emergencyAddress, u.driversLicense, u.SSCard, u.approved);    
+        users.push(newUser);
+        res.json(newUser);
+    } else {
+        res.status(400).send({message: 'Invalid user'});
+    }
 });
 
 // This route will be used to get a user by their userName
-// add authentication
+// must be an admin or the user
 userRouter.get('/:userName', (req, res) => {
-    let userName = req.params.userName;
-    let user = users.find(user => user.userName == userName);
-    res.json(user);
+    let user = users.find(user => user.userName == req.params.userName);
+    if(user){
+        res.json(user.passwordlessUser());
+    } else {
+        res.status(404).send({message: 'User not found'});
+    }
 });
 
 // This route will be used to login a user
-// add authentication
 userRouter.post('/login', (req, res) => {
-    let user = req.body;
-    let index = users.findIndex(user => user.userName == user.userName && user.password == user.password);
-    if(index){
-        res.json(user); // will send back a jwt token later
+    let user = users.find(user => user.userName == req.body.userName && user.password == req.body.password);
+    if(user){
+        let pwdless = user.passwordlessUser();
+        let token = jwt.sign({
+            exp: Math.floor(Date.now() / 1000) + (60 * 60), // 1 hour expiration
+            data: pwdless
+        }, 'secret', { algorithm: 'HS256' });
+        res.status(209).send({token: token}); 
     } else {
         res.status(404).send({message: 'User not found'});
     }
 });
 
 // This route will be used to update a user
-// add authentication
+// must be an admin or the user
+// must be an admin to change role
 userRouter.put('/:userName', (req, res) => {
     let userName = req.params.userName;
     let user = req.body;
@@ -95,7 +73,7 @@ userRouter.put('/:userName', (req, res) => {
 });
 
 // This route will be used to delete a user
-// add authentication
+// must be an admin or the user
 userRouter.delete('/:userName', (req, res) => {
     let userName = req.params.userName;
     let index = users.findIndex(user => user.userName == userName);
