@@ -2,7 +2,7 @@
   "name": "vms_api",
   "version": "1.0.0",
   "description": "An API to manage the data for a volunteer management system",
-  "main": "index.js",
+  "main": "dist/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
