@@ -12,31 +12,13 @@
     ],
     "paths": {
         "/users": {
-            "get": {
-                "description": "Get all users",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Volunteer"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    }
-                }
-            },
             "post": {
                 "description": "Create a new user",
                 "requestBody": {
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/Volunteer"
+                                "$ref": "#/components/schemas/User"
                             }
                         }
                     }
@@ -47,13 +29,33 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Volunteer"
+                                    "$ref": "#/components/schemas/User"
                                 }
                             }
                         }
                     },
                     "400": {
                         "description": "Bad request"
+                    }
+                }
+            }
+        },
+        "/users/search": {
+            "get": {
+                "description": "Get all users",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
                     }
                 }
             }
@@ -79,10 +81,13 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Volunteer"
+                                    "$ref": "#/components/schemas/User"
                                 }
                             }
                         }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
                     },
                     "404": {
                         "description": "User not found"
@@ -106,7 +111,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/Volunteer"
+                                "$ref": "#/components/schemas/User"
                             }
                         }
                     },
@@ -118,13 +123,19 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Volunteer"
+                                    "$ref": "#/components/schemas/User"
                                 }
                             }
                         }
                     },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
                     "404": {
-                        "description": "Volunteer not found"
+                        "description": "User not found"
                     }
                 }
             },
@@ -153,13 +164,13 @@
             }
         },
         "/users/login": {
-            "get": {
+            "post": {
                 "description": "Login a user",
                 "requestBody": {
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/loginUser"
+                                "$ref": "#/components/schemas/LoginUser"
                             }
                         }
                     }
@@ -170,7 +181,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/loginUser"
+                                    "$ref": "#/components/schemas/Authentication"
                                 }
                             }
                         }
@@ -184,9 +195,20 @@
     },
     "components": {
         "schemas": {
-            "Volunteer": {
+            "Authentication": {
                 "type": "object",
                 "properties": {
+                    "token": {
+                        "type": "string"
+                    }
+                }
+            },
+            "User": {
+                "type": "object",
+                "properties": {
+                    "role": {
+                        "type": "string"
+                    },
                     "first": {
                         "type": "string"
                     },
@@ -258,7 +280,7 @@
                     }
                 }
             },
-            "loginUser": {
+            "LoginUser": {
                 "type": "object",
                 "properties": {
                     "userName": {
