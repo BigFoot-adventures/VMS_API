@@ -25,11 +25,12 @@ userRouter.get('/search', (req, res) => {
 userRouter.post('/', (req, res) => {
     let u = req.body;
     // validate user
-    let newUser;
-    if(u.role && u.first && u.last && u.userName && u.password && u.preferedLocations && u.skills_Interests && u.availability && u.address && u.phone && u.email && u.education && u.currentLicenses && u.emergencyContact && u.emergencyPhone && u.emergencyEmail && u.emergencyAddress && u.driversLicense && u.SSCard && u.approved) {
-        newUser = new user(u.role, u.first, u.last, u.userName, u.password, u.preferedLocations, u.skills_Interests, u.availability, u.address, u.phone, u.email, u.education, u.currentLicenses, u.emergencyContact, u.emergencyPhone, u.emergencyEmail, u.emergencyAddress, u.driversLicense, u.SSCard, u.approved);    
-        users.push(newUser);
-        res.json(newUser);
+    let newUser = new user(u.role, u.first, u.last, u.userName, u.password, u.preferedLocations, u.skills_Interests, u.availability, u.address, u.phone, u.email, u.education, u.currentLicenses, u.emergencyContact, u.emergencyPhone, u.emergencyEmail, u.emergencyAddress, u.driversLicense, u.SSCard, u.approved);    
+    console.log(newUser);
+    
+    if(newUser.isValid()) {
+        users.push(newUser);    
+        res.json(newUser.passwordlessUser());
     } else {
         res.status(400).send({message: 'Invalid user'});
     }
@@ -65,11 +66,20 @@ userRouter.post('/login', (req, res) => {
 // must be an admin or the user
 // must be an admin to change role
 userRouter.put('/:userName', (req, res) => {
-    let userName = req.params.userName;
-    let user = req.body;
-    let index = users.findIndex(user => user.userName == userName);
-    users[index] = user;
-    res.json(user);
+    let index = users.findIndex(user => user.userName == req.params.userName);
+    if(index){
+        let u = req.body;
+        let newUser = new user(u.role, u.first, u.last, u.userName, u.password, u.preferedLocations, u.skills_Interests, u.availability, u.address, u.phone, u.email, u.education, u.currentLicenses, u.emergencyContact, u.emergencyPhone, u.emergencyEmail, u.emergencyAddress, u.driversLicense, u.SSCard, u.approved);    
+        // check if admin // I did not create a response for a volunteer trying to change the role, because they should not have an input field for role
+        if(!admin)
+            newUser.role = users[index].role;
+        if(newUser.isValid()) {
+            users[index] = newUser;    
+            res.json(newUser.passwordlessUser());
+        } else {
+            res.status(400).send({message: 'Invalid user'});
+        }
+    }
 });
 
 // This route will be used to delete a user
