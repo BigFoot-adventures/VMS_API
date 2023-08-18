@@ -8,8 +8,9 @@ let userRouter = express.Router();
 let users: user[] = [];
 users.push(new user('admin', 'John', 'Doe', 'jdoe', 'password',['location1', 'location2'], ['skill1', 'skill2'], ['Monday', 'Tuesday'], '1234 Main St', '123-456-7890', 'test@test.com', 'High School', ['license1', 'license2'], 'Jane Doe', '123-456-7890', 'jane@doe', '1234 Main St', true, true, true));
 users.push(new user('volunteer', 'Jane', 'Doe', 'jdoe2', 'password',['location1', 'location2'], ['skill1', 'skill2'], ['Monday', 'Tuesday'], '1234 Main St', '123-456-7890', 'jane@doe.com', 'College', ['license1', 'license2'], 'John Doe', '123-456-7890', 'test@test.com', '1234 Main St', true, true, true));
+let forbiddenNames = ['login', 'search', 'renew'];
 
-// This route will be used to get all users
+// Get all users
 // must be an admin
 userRouter.get('/search', (req, res) => {
     let pwdless = users.map(user => user.passwordlessUser());
@@ -20,23 +21,24 @@ userRouter.get('/search', (req, res) => {
     }
 });
 
-// This route will be used to create a new user
-// add unique userName validation
+// Create a new user
 userRouter.post('/', (req, res) => {
     let u = req.body;
-    // validate user
     let newUser = new user(u.role, u.first, u.last, u.userName, u.password, u.preferedLocations, u.skills_Interests, u.availability, u.address, u.phone, u.email, u.education, u.currentLicenses, u.emergencyContact, u.emergencyPhone, u.emergencyEmail, u.emergencyAddress, u.driversLicense, u.SSCard, u.approved);    
-    console.log(newUser);
-    
-    if(newUser.isValid()) {
-        users.push(newUser);    
-        res.json(newUser.passwordlessUser());
+
+    if(forbiddenNames.includes(newUser.userName) || users.find(user => user.userName == newUser.userName)) {
+        res.status(400).send({message: 'User name not available'});
     } else {
-        res.status(400).send({message: 'Invalid user'});
+        if(newUser.isValid()) {
+            users.push(newUser);    
+            res.json(newUser.passwordlessUser());
+        } else {
+            res.status(400).send({message: 'Invalid user'});
+        }
     }
 });
 
-// This route will be used to get a user by their userName
+// Get a user by userName
 // must be an admin or the user
 userRouter.get('/:userName', (req, res) => {
     let user = users.find(user => user.userName == req.params.userName);
@@ -47,12 +49,12 @@ userRouter.get('/:userName', (req, res) => {
     }
 });
 
-// This route will be used to login a user
+// Login a user, returns a token
 userRouter.post('/login', (req, res) => {
     let user = users.find(user => user.userName == req.body.userName && user.password == req.body.password);
     if(user){
         let data = {
-            username: user.userName,
+            userName: user.userName,
             role: user.role,
             first: user.first,
             last: user.last
@@ -67,7 +69,7 @@ userRouter.post('/login', (req, res) => {
     }
 });
 
-// This route will be used to update a user
+// Update a user
 // must be an admin or the user
 // must be an admin to change role
 userRouter.put('/:userName', (req, res) => {
@@ -79,15 +81,23 @@ userRouter.put('/:userName', (req, res) => {
         if(!admin)
             newUser.role = users[index].role;
         if(newUser.isValid()) {
-            users[index] = newUser;    
-            res.json(newUser.passwordlessUser());
+            let message = '';
+            if(forbiddenNames.includes(newUser.userName) || users.find(user => user.userName == newUser.userName)) {
+                newUser.userName = users[index].userName;
+                message = 'Username not available';
+            } else {
+                message = 'User updated';
+            }
+            users[index] = newUser;
+            res.status(200).send({message: message, user: newUser.passwordlessUser()});
+            
         } else {
             res.status(400).send({message: 'Invalid user'});
         }
     }
 });
 
-// This route will be used to delete a user
+// Delete a user
 // must be an admin or the user
 userRouter.delete('/:userName', (req, res) => {
     let userName = req.params.userName;
