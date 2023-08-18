@@ -51,10 +51,15 @@ userRouter.get('/:userName', (req, res) => {
 userRouter.post('/login', (req, res) => {
     let user = users.find(user => user.userName == req.body.userName && user.password == req.body.password);
     if(user){
-        let pwdless = user.passwordlessUser();
+        let data = {
+            username: user.userName,
+            role: user.role,
+            first: user.first,
+            last: user.last
+        };
         let token = jwt.sign({
             exp: Math.floor(Date.now() / 1000) + (60 * 60), // 1 hour expiration
-            data: pwdless
+            data: data
         }, 'secret', { algorithm: 'HS256' });
         res.status(209).send({token: token}); 
     } else {
