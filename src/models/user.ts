@@ -19,9 +19,29 @@ export class user {
     emergencyAddress: string;
     driversLicense: boolean;
     SSCard: boolean;
-    approved: boolean;
+    approved: 'pending' | 'approved' | 'denied' = 'pending';
 
-    constructor(role: 'volunteer' | 'admin', first: string, last: string, userName: string, password: string, preferedLocations: string[], skills_Interests: string[], availability: string[], address: string, phone: string, email: string, education: string, currentLicenses: string[], emergencyContact: string, emergencyPhone: string, emergencyEmail: string, emergencyAddress: string, driversLicense: boolean, SSCard: boolean, approved: boolean) {
+    constructor(
+        role: 'volunteer' | 'admin',
+        first: string, last: string,
+        userName: string,
+        password: string,
+        preferedLocations: string[],
+        skills_Interests: string[],
+        availability: string[],
+        address: string,
+        phone: string,
+        email: string,
+        education: string,
+        currentLicenses: string[],
+        emergencyContact: string,
+        emergencyPhone: string,
+        emergencyEmail: string,
+        emergencyAddress: string,
+        driversLicense: boolean,
+        SSCard: boolean,
+        approved: 'pending' | 'approved' | 'denied' = 'pending'
+    ) {
         this.role = role;
         this.first = first;
         this.last = last;
@@ -110,7 +130,7 @@ export class user {
             valid = false;
         else if(typeof this.SSCard != 'boolean')
             valid = false;
-        else if(typeof this.approved != 'boolean')
+        else if(typeof this.approved != 'string')
             valid = false;
         return valid;
     }
