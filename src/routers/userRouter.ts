@@ -6,15 +6,58 @@ import { admin } from '../middleware/auth';
 let userRouter = express.Router();
 
 let users: user[] = [];
-users.push(new user('admin', 'John', 'Doe', 'jdoe', 'password',['location1', 'location2'], ['skill1', 'skill2'], ['Monday', 'Tuesday'], '1234 Main St', '123-456-7890', 'test@test.com', 'High School', ['license1', 'license2'], 'Jane Doe', '123-456-7890', 'jane@doe', '1234 Main St', true, true, true));
-users.push(new user('volunteer', 'Jane', 'Doe', 'jdoe2', 'password',['location1', 'location2'], ['skill1', 'skill2'], ['Monday', 'Tuesday'], '1234 Main St', '123-456-7890', 'jane@doe.com', 'College', ['license1', 'license2'], 'John Doe', '123-456-7890', 'test@test.com', '1234 Main St', true, true, true));
+users.push(new user('admin', 'John', 'Doe', 'jdoe', 'password',['location1', 'location2'], ['skill1', 'skill2'], ['Monday', 'Tuesday'], '1234 Main St', '123-456-7890', 'test@test.com', 'High School', ['license1', 'license2'], 'Jane Doe', '123-456-7890', 'jane@doe', '1234 Main St', true, true, 'approved'));
+users.push(new user('volunteer', 'Jane', 'Doe', 'jdoe2', 'password',['location1', 'location2'], ['skill1', 'skill2'], ['Monday', 'Tuesday'], '1234 Main St', '123-456-7890', 'jane@doe.com', 'College', ['license1', 'license2'], 'John Doe', '123-456-7890', 'test@test.com', '1234 Main St', true, true, 'approved'));
 let forbiddenNames = ['login', 'search', 'renew'];
 
-// Get all users
+// Search for users
 // must be an admin
 userRouter.get('/search', (req, res) => {
-    let pwdless = users.map(user => user.passwordlessUser());
+    const approved = req.query.approved;
+    const userName = req.query.userName;
+    const first = req.query.first;
+    const last = req.query.last;
     if(admin){
+        // no error handling for query param types
+        let pwdless = users.map(user => user.passwordlessUser());
+        if(approved){
+            pwdless = pwdless.filter(user => {
+                return user.approved == approved;
+            });
+        }
+        if(userName){
+            if(userName == typeof 'string') {
+                pwdless = pwdless.filter(user => {
+                    if (user.userName.includes(userName)) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                });
+            }
+        }
+        if(first){
+            if(first == typeof 'string') {
+                pwdless = pwdless.filter(user => {
+                    if (user.first.toLowerCase().includes(first.toLowerCase())) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                });
+            }
+        }
+        if(last){
+            if(last == typeof 'string') {
+                pwdless = pwdless.filter(user => {
+                    if (user.last.toLowerCase().includes(last.toLowerCase())) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                });
+            }
+        }
         res.json(pwdless);
     } else {
         res.status(401).send({message: 'Unauthorized'});
