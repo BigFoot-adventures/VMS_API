@@ -28,11 +28,12 @@ authRouter.use('/users/:userName', (req, res, next) => {
                     let verified = jwt.verify(req.headers.authorization.replace('Bearer ', ''), 'secret', {algorithms: ['HS256']}) as any;
                     if(verified.data.role == 'admin'){
                         admin = true;
-                        continue;
+                        break;
                     } else if(verified.data.userName == req.params.userName){
                         admin = false;
-                        continue;
+                        break;
                     } else {
+                        admin = false;
                         cont = false;
                         break;
                     }
