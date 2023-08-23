@@ -54,42 +54,29 @@ authRouter.use('/users/:userName', (req, res, next) => {
     }
 });
 
-//admin only
-/*authRouter.use('/search', (req, res, next) => {
-    let routes = [
-        {
-            method: 'GET'
-        }
-    ];
+authRouter.use('/opps', (req, res, next) => {
     let cont = true;
-    for(let route of routes){
-        if(req.method == route.method){
-            if(req.headers.authorization){
-                try {
-                    let verified = jwt.verify(req.headers.authorization.replace('Bearer ', ''), 'secret', {algorithms: ['HS256']}) as any;
-                    if(verified.data.role == 'admin'){
-                        admin = true;
-                        continue;
-                    } else {
-                        admin = false;
-                        cont = false;
-                        break;
-                    }
-                } catch {
-                    cont = false;
-                    break;
-                }
-            } else {
+    if(req.headers.authorization){
+        try {
+            let verified = jwt.verify(req.headers.authorization.replace('Bearer ', ''), 'secret', {algorithms: ['HS256']}) as any;
+            if(verified.data.role == 'admin'){
+                admin = true;
+            }  else {
+                admin = false;
                 cont = false;
-                break;
             }
+        } catch {
+            cont = false;
         }
+    } else {
+        cont = false;
     }
     if(cont){
         next();
     } else {
         res.status(401).send({message: 'Unauthorized'});
     }
-});*/
+});
+    
 
 export { authRouter, admin };

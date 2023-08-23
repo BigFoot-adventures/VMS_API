@@ -1,10 +1,12 @@
 import express from 'express';
 import cors from 'cors';
-import { userRouter } from './routers/userRouter';
-import { authRouter } from './middleware/auth';
 import swaggerUI from 'swagger-ui-express';
 import { readFileSync } from 'fs';
 import path from 'path';
+
+import { userRouter } from './routers/userRouter';
+import { oppRouter } from './routers/oppRouter';
+import { authRouter } from './middleware/auth';
 
 let port = 3000;
 let swagger_doc = readFileSync(path.join(process.cwd(),'src','openapi.json'));
@@ -20,6 +22,7 @@ app.use(express.json());
 
 app.use('/', authRouter);
 app.use('/users', userRouter);
+app.use('/opps', oppRouter);
 
 app.use('/', swaggerUI.serve, swaggerUI.setup(swagger_obj));
 
